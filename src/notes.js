@@ -112,6 +112,10 @@ var Login = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+    ReactDOM.findDOMNode(this.refs.pwInput).focus();
+  },
+
   setPassword: function(event) {
     this.setState({
       password: event.target.value
@@ -134,11 +138,14 @@ var Login = React.createClass({
   },
 
   render: function() {
-    return <form onSubmit={this.submit} >
-      <input type="password" value={this.state.password} onChange={this.setPassword} />
-      <div className="error">{this.state.status}</div>
-      <input type="submit" />
-    </form>
+    return (
+      <div className="centerparent">
+        <form onSubmit={this.submit}>
+          <input type="password" value={this.state.password} onChange={this.setPassword} className="main_pw" ref="pwInput" placeholder="Enter password"/>
+          <div className="error">{this.state.status}</div>
+        </form>
+      </div>
+    );
   }
 })
 
