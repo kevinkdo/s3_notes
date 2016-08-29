@@ -74,7 +74,8 @@ var S3Manager = {
 var Router = React.createClass({
   getInitialState: function() {
     return {
-      route: "login"
+      route: "login",
+      initial_text: ""
     };
   },
 
@@ -84,13 +85,20 @@ var Router = React.createClass({
     });
   },
 
+  routeToEditInitialText: function(initial_text) {
+    this.setState({
+      route: "notes_editor",
+      initial_text: initial_text
+    });
+  },
+
   render: function() {
     switch(this.state.route) {
       case "notes_editor":
-        return <NotesEditor setRoute={this.setRoute} />;
+        return <NotesEditor setRoute={this.setRoute} initial_text={this.state.initial_text} />;
         break;
       case "login":
-        return <Login setRoute={this.setRoute} />;
+        return <Login setRoute={this.setRoute} routeToEditInitialText={this.routeToEditInitialText}/>;
         break;
     }
   }
@@ -99,7 +107,8 @@ var Router = React.createClass({
 var Login = React.createClass({
   getInitialState: function() {
     return {
-      password: ""
+      password: "",
+      status: ""
     };
   },
 
@@ -110,14 +119,24 @@ var Login = React.createClass({
   },
 
   submit: function(event) {
+    var me = this;
     event.preventDefault();
-    S3Manager.setPasswordAndReloadConfigs(this.state.password);
-    this.props.setRoute("notes_editor");
+    S3Manager.setPasswordAndReloadConfigs(me.state.password);
+    S3Manager.getS3().getObject({Bucket: S3Manager.bucket, Key: S3Manager.notes_filename}, function(err, data) {
+      if (err) {
+        me.setState({
+          status: err.code + ": " + err.message
+        });
+      } else {
+        me.props.routeToEditInitialText(buf2str(data.Body.buffer));
+      }
+    });
   },
 
   render: function() {
     return <form onSubmit={this.submit} >
       <input type="password" value={this.state.password} onChange={this.setPassword} />
+      <div className="error">{this.state.status}</div>
       <input type="submit" />
     </form>
   }
@@ -126,28 +145,10 @@ var Login = React.createClass({
 var NotesEditor = React.createClass({
   getInitialState: function() {
     return {
-      text: "",
-      status: "",
+      text: this.props.initial_text,
+      status: "Last loaded " + new Date().toLocaleString(),
       is_error: false
     }
-  },
-
-  componentDidMount: function() {
-    var me = this;
-    S3Manager.getS3().getObject({Bucket: S3Manager.bucket, Key: S3Manager.notes_filename}, function(err, data) {
-      if (err) {
-        me.setState({
-          status: err.code + ": " + err.message,
-          is_error: true
-        });
-      } else {
-        me.setState({
-          text: buf2str(data.Body.buffer),
-          status: "Last loaded " + new Date().toLocaleString(),
-          is_error: false
-        });
-      }
-    });
   },
 
   setText: function(event) {
