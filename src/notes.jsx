@@ -160,6 +160,18 @@ var NotesEditor = React.createClass({
     }
   },
 
+  componentDidMount: function() {
+    var me = this;
+    Mousetrap.bind(['ctrl+s', 'command+s'], function(e) {
+      me.saveText();
+      return false;
+    });
+  },
+
+  componentWillUnmount: function() {
+    Mousetrap.unbind(['ctrl+s', 'command+s']);
+  },
+
   setText: function(event) {
     this.setState({
       text: event.target.value
@@ -193,7 +205,7 @@ var NotesEditor = React.createClass({
   render: function() {
     return (
       <div>
-        <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"/>
+        <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className="mousetrap"/>
         <br />
         <button onClick={this.saveText} className="save_btn">Save</button>
         <p className={this.state.is_error ? "error" : "success"}>{this.state.status}</p>
