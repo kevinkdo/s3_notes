@@ -140,10 +140,12 @@ var Login = React.createClass({
   render: function() {
     return (
       <div className="centerparent">
-        <form onSubmit={this.submit}>
-          <input type="password" value={this.state.password} onChange={this.setPassword} className="main_pw" ref="pwInput" placeholder="Enter password"/>
-          <div className="error">{this.state.status}</div>
-        </form>
+        <div className="centerchild">
+          <form onSubmit={this.submit}>
+            <input type="password" value={this.state.password} onChange={this.setPassword} className="main_pw" ref="pwInput" placeholder="Enter password"/>
+            <div className="error">{this.state.status}</div>
+          </form>
+        </div>
       </div>
     );
   }
@@ -191,9 +193,10 @@ var NotesEditor = React.createClass({
   render: function() {
     return (
       <div>
-      <button onClick={this.saveText}>Save</button><span className={this.state.is_error ? "error" : "success"}>{this.state.status}</span>
-      <br />
-      <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text}/>
+        <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"/>
+        <br />
+        <button onClick={this.saveText} className="save_btn">Save</button>
+        <p className={this.state.is_error ? "error" : "success"}>{this.state.status}</p>
       </div>
     );
   }

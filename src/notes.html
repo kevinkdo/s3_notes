@@ -8,18 +8,37 @@
   <script src="thirdparty/browser.min.js"></script>
   <script type="text/babel" src="notes.js"></script>
   <style>
+    html {
+      background-color: #eee8d5;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      height: 100%;
+      overflow: auto;
+    }
+
+    #react_main {
+      height: 100%;
+    }
+
+    .success, .error {
+      font-family: Sans-Serif;
+      font-size: 14px;
+      margin: 0px;
+    }
+
     .success {
-      color: green;
+      color: #268bd2;
     }
 
     .error {
-      color: red;
+      color: #dc322f;
     }
 
     .centerparent {
-      background: white;
-      height: 400px;
-      width: 60%;
+      height: 100%;
       margin: 0 auto;
       display: flex;
       justify-content: center;
@@ -27,12 +46,46 @@
       overflow: auto;
     }
 
+    .centerchild {
+      align-items: stretch;
+    }
+
     .main_pw {
-      font-size: 20px;
+      font-size: 16px;
+      padding: 60px;
+    }
+
+    .save_btn {
+      font-family: Sans-Serif;
+      background-color : #268bd2;
+      color: #fdf6e3;
+      padding: 6px 12px;
+      text-decoration: none;
+      border: none;
+      font-size: 16px;
+      border-radius: 4px;
+      margin: 6px 0px;
+    }
+
+    input[type="password"] {
+      background-color : #fdf6e3;
+      color: #586e75;
+      padding: 8px;
+      outline: none;
+      border: none;
+      font-size: 14px;
+      border-radius: 4px;
     }
 
     textarea {
-      font-family: "Lucida Console", Monaco, monospace;
+      background-color : #fdf6e3;
+      font-family: Monaco, monospace;
+      color: #586e75;
+      padding: 8px;
+      outline: none;
+      border: none;
+      font-size: 12px;
+      border-radius: 4px;
     }
   </style>
 </head>
