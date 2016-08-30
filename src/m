@@ -8,3 +8,4 @@ echo Done building targets.
 echo
 echo Switch to minified thirdparty JS.
 echo Remove browser.min.js
+echo Switch to bundle.js
