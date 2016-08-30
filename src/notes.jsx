@@ -203,7 +203,7 @@ var NotesEditor = React.createClass({
     S3Manager.getS3().putObject(put_options, function(err, data) {
       if (err) {
         me.setState({
-          status: err,
+          status: err.code + ": " + err.message,
           is_error: true
         });
       } else {
@@ -217,12 +217,39 @@ var NotesEditor = React.createClass({
     });
   },
 
+  takeSnapshot: function() {
+    var me = this;
+    var snapshot_name = S3Manager.notes_filename + '_backup/' + new Date().getTime();
+    var put_options = {
+      Bucket: S3Manager.bucket,
+      Key: snapshot_name,
+      ACL: S3Manager.ACL,
+      Body: str2buf(this.state.text)
+    };
+
+    S3Manager.getS3().putObject(put_options, function(err, data) {
+      if (err) {
+        me.setState({
+          status: err.code + ": " + err.message,
+          is_error: true
+        });
+      } else {
+        me.setState({
+          status: "Last saved snapshot " + snapshot_name,
+          is_error: false,
+          has_unsaved_changes: false
+        });
+      }
+    });
+  },
+
   render: function() {
     return (
       <div>
         <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className="mousetrap"/>
         <br />
         <button onClick={this.saveText} className="save_btn" disabled={!this.state.has_unsaved_changes}>Save</button>
+        <button onClick={this.takeSnapshot} className="save_btn">Take snapshot</button>
         <p className={this.state.is_error ? "error" : "success"}>{this.state.status}</p>
       </div>
     );
