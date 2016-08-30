@@ -1,0 +1,10 @@
+# Primitive bash build system
+
+# Build JSX -> JS
+jsx < notes.jsx > bundle.js
+
+# Echo
+echo Done building targets.
+echo
+echo Switch to minified thirdparty JS.
+echo Remove browser.min.js
