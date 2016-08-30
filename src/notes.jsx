@@ -152,11 +152,22 @@ var Login = React.createClass({
 })
 
 var NotesEditor = React.createClass({
+  enableBeforeUnload: function() {
+    window.onbeforeunload = function (e) {
+      return "Discard changes?";
+    };
+  },
+
+  disableBeforeUnload: function() {
+    window.onbeforeunload = null;
+  },
+
   getInitialState: function() {
     return {
       text: this.props.initial_text,
       status: "Last loaded " + new Date().toLocaleString(),
-      is_error: false
+      is_error: false,
+      has_unsaved_changes: false
     }
   },
 
@@ -174,8 +185,10 @@ var NotesEditor = React.createClass({
 
   setText: function(event) {
     this.setState({
-      text: event.target.value
+      text: event.target.value,
+      has_unsaved_changes: true
     });
+    this.enableBeforeUnload();
   },
 
   saveText: function() {
@@ -196,8 +209,10 @@ var NotesEditor = React.createClass({
       } else {
         me.setState({
           status: "Last saved " + new Date().toLocaleString(),
-          is_error: false
+          is_error: false,
+          has_unsaved_changes: false
         });
+        me.disableBeforeUnload();
       }
     });
   },
@@ -207,7 +222,7 @@ var NotesEditor = React.createClass({
       <div>
         <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className="mousetrap"/>
         <br />
-        <button onClick={this.saveText} className="save_btn">Save</button>
+        <button onClick={this.saveText} className="save_btn" disabled={!this.state.has_unsaved_changes}>Save</button>
         <p className={this.state.is_error ? "error" : "success"}>{this.state.status}</p>
       </div>
     );
