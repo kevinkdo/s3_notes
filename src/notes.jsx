@@ -40,13 +40,13 @@ function decryptSecret(array, password) {
     return decrypted;
 }
 
-
 // Singleton
 var S3Manager = {
   // Constants
   region: 'us-west-2',
   bucket: 'kevinkdo.com',
-  notes_filename: 'notes.txt',
+  personal_notes_filename:'notes.txt',
+  work_notes_filename: 'notes_work.txt',
   ACL: 'private',
   access_key_id: 'AKIAI5NZKYTAV6VDJY3A',
   encrypted_secret: [19, -29, -31, -36, -22, -9, -16, -74, 55, 4, -57, -13, -38, -12, -32, -32, -2, -2, -25, -46, -48, 2, -44, -4, 11, 1, 70, -30, -21, 12, -13, -31, 6, 3, 5, 24, -9, -43, 3, -36],
@@ -126,7 +126,7 @@ var Login = React.createClass({
     var me = this;
     event.preventDefault();
     S3Manager.setPasswordAndReloadConfigs(me.state.password);
-    S3Manager.getS3().getObject({Bucket: S3Manager.bucket, Key: S3Manager.notes_filename}, function(err, data) {
+    S3Manager.getS3().getObject({Bucket: S3Manager.bucket, Key: S3Manager.personal_notes_filename}, function(err, data) {
       if (err) {
         me.setState({
           status: err.code + ": " + err.message
@@ -167,7 +167,8 @@ var NotesEditor = React.createClass({
       text: this.props.initial_text,
       status: "Last loaded " + new Date().toLocaleString(),
       is_error: false,
-      has_unsaved_changes: false
+      has_unsaved_changes: false,
+      filename: S3Manager.personal_notes_filename
     }
   },
 
@@ -191,11 +192,37 @@ var NotesEditor = React.createClass({
     this.enableBeforeUnload();
   },
 
+  setFilename: function(event) {
+    var me = this;
+    if (this.state.has_unsaved_changes) {
+      alert('Please save your changes.')
+      return;
+    }
+    var new_filename = event.target.value;
+    S3Manager.getS3().getObject({Bucket: S3Manager.bucket, Key: new_filename}, function(err, data) {
+      if (err) {
+        me.setState({
+          status: err.code + ": " + err.message,
+          is_error: true,
+          filename: new_filename
+        });
+      } else {
+        me.setState({
+          text: buf2str(data.Body.buffer),
+          status: "Last loaded " + new Date().toLocaleString(),
+          is_error: false,
+          has_unsaved_changes: false,
+          filename: new_filename
+        });
+      }
+    });
+  },
+
   saveText: function() {
     var me = this;
     var put_options = {
       Bucket: S3Manager.bucket,
-      Key: S3Manager.notes_filename,
+      Key: this.state.filename,
       ACL: S3Manager.ACL,
       Body: str2buf(this.state.text)
     };
@@ -219,7 +246,7 @@ var NotesEditor = React.createClass({
 
   takeSnapshot: function() {
     var me = this;
-    var snapshot_name = S3Manager.notes_filename + '_backup/' + new Date().getTime();
+    var snapshot_name = this.state.filename + '_backup/' + new Date().getTime();
     var put_options = {
       Bucket: S3Manager.bucket,
       Key: snapshot_name,
@@ -246,6 +273,11 @@ var NotesEditor = React.createClass({
   render: function() {
     return (
       <div>
+        <select value={this.state.filename} onChange={this.setFilename}>
+          <option value={S3Manager.personal_notes_filename}>Personal notes</option>
+          <option value={S3Manager.work_notes_filename}>Work notes</option>
+        </select>
+        <br />
         <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className="mousetrap"/>
         <br />
         <button onClick={this.saveText} className="save_btn" disabled={!this.state.has_unsaved_changes}>Save</button>
