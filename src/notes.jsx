@@ -47,7 +47,8 @@ var S3Manager = {
   bucket: 'kevinkdo.com',
   personal_notes_filename:'notes.txt',
   work_notes_filename: 'notes_work.txt',
-  ACL: 'private',
+  private_acl: 'private',
+  public_acl: 'public-read',
   access_key_id: 'AKIAI5NZKYTAV6VDJY3A',
   encrypted_secret: [19, -29, -31, -36, -22, -9, -16, -74, 55, 4, -57, -13, -38, -12, -32, -32, -2, -2, -25, -46, -48, 2, -44, -4, 11, 1, 70, -30, -21, 12, -13, -31, 6, 3, 5, 24, -9, -43, 3, -36],
   
@@ -223,7 +224,7 @@ var NotesEditor = React.createClass({
     var put_options = {
       Bucket: S3Manager.bucket,
       Key: this.state.filename,
-      ACL: S3Manager.ACL,
+      ACL: S3Manager.private_acl,
       Body: str2buf(this.state.text)
     };
 
@@ -250,7 +251,7 @@ var NotesEditor = React.createClass({
     var put_options = {
       Bucket: S3Manager.bucket,
       Key: snapshot_name,
-      ACL: S3Manager.ACL,
+      ACL: S3Manager.private_acl,
       Body: str2buf(this.state.text)
     };
 
@@ -270,6 +271,40 @@ var NotesEditor = React.createClass({
     });
   },
 
+  startFileSelection: function() {
+    document.getElementById('hidden_file_input').click();
+  },
+
+  uploadFile: function() {
+    var me = this;
+    var file_input = document.getElementById('hidden_file_input');
+    var file = file_input.files[0];
+    var upload_path = 'dropbox/' + file.name;
+    if (file) {
+      var put_options = {
+        Bucket: S3Manager.bucket,
+        Key: upload_path,
+        ACL: S3Manager.public_acl,
+        ContentType: file.type,
+        Body: file
+      };
+
+      S3Manager.getS3().putObject(put_options, function(err, data) {
+        if (err) {
+          me.setState({
+            status: err.code + ": " + err.message,
+            is_error: true
+          });
+        } else {
+          me.setState({
+            status: "Last saved file " + upload_path,
+            is_error: false
+          });
+        }
+      });
+    }
+  },
+
   render: function() {
     return (
       <div>
@@ -282,6 +317,8 @@ var NotesEditor = React.createClass({
         <br />
         <button onClick={this.saveText} className="save_btn" disabled={!this.state.has_unsaved_changes}>Save</button>
         <button onClick={this.takeSnapshot} className="save_btn">Take snapshot</button>
+        <button onClick={this.startFileSelection} className="save_btn">Upload a file</button>
+        <input type="file" name="file" id="hidden_file_input" className="hidden" onChange={this.uploadFile} />
         <p className={this.state.is_error ? "error" : "success"}>{this.state.status}</p>
       </div>
     );
