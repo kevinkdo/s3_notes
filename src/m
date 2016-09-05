@@ -1,11 +1,10 @@
 # Primitive bash build system
 
-# Build JSX -> JS
-jsx < notes.jsx > bundle.js
+echo Building JSX
+babel --plugins transform-react-jsx notes.jsx > bundle.js
 
-# Echo
-echo Done building targets.
-echo
-echo Switch to minified thirdparty JS.
-echo Remove browser.min.js
-echo Switch to bundle.js
+echo Post-processing notes.html
+grep -vwE "browser.min.js|notes.jsx" notes.html > notes_prod.html
+sed -i -e 's#<!--<script src="bundle.js"></script>-->#<script src="bundle.js"></script>#g' notes_prod.html
+
+echo Done building targets: notes_prod.html, bundle.js
