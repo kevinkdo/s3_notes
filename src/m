@@ -4,7 +4,8 @@ echo Building JSX
 babel --plugins transform-react-jsx notes.jsx > bundle.js
 
 echo Post-processing notes.html
-grep -vwE "browser.min.js|notes.jsx" notes.html > notes_prod.html
-sed -i -e 's#<!--<script src="bundle.js"></script>-->#<script src="bundle.js"></script>#g' notes_prod.html
+grep -vwE "browser.min.js|notes.jsx" notes.html > temp
+sed -e 's#<!--<script src="bundle.js"></script>-->#<script src="bundle.js"></script>#g' temp > notes_prod.html
+rm temp
 
 echo Done building targets: notes_prod.html, bundle.js

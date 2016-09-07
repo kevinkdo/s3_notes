@@ -44,13 +44,13 @@ function decryptSecret(array, password) {
 var S3Manager = {
   // Constants
   region: 'us-west-2',
-  bucket: 'kevinkdo.com',
+  bucket: 'kkdo.me',
   personal_notes_filename:'notes.txt',
   work_notes_filename: 'notes_work.txt',
   private_acl: 'private',
   public_acl: 'public-read',
-  access_key_id: 'AKIAI5NZKYTAV6VDJY3A',
-  encrypted_secret: [19, -29, -31, -36, -22, -9, -16, -74, 55, 4, -57, -13, -38, -12, -32, -32, -2, -2, -25, -46, -48, 2, -44, -4, 11, 1, 70, -30, -21, 12, -13, -31, 6, 3, 5, 24, -9, -43, 3, -36],
+  access_key_id: 'AKIAIUDZNB443E5GRHIA',
+  encrypted_secret: [-30, -46, -52, -5, 25, -14, -34, -2, 4, -43, -62, 10, -48, -9, 11, -35, -20, 33, -41, 4, -20, -27, -50, -8, 10, -35, 25, -20, 1, -21, -30, 21, -27, -19, 5, 8, -27, -31, 0, -44],
   
   // State variables
   entered_password: '',
@@ -284,7 +284,7 @@ var NotesEditor = React.createClass({
       var put_options = {
         Bucket: S3Manager.bucket,
         Key: upload_path,
-        ACL: S3Manager.public_acl,
+        ACL: S3Manager.private_acl,
         ContentType: file.type,
         Body: file
       };
