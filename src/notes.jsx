@@ -284,7 +284,7 @@ var NotesEditor = React.createClass({
       var put_options = {
         Bucket: S3Manager.bucket,
         Key: upload_path,
-        ACL: S3Manager.private_acl,
+        ACL: S3Manager.public_acl,
         ContentType: file.type,
         Body: file
       };
@@ -297,7 +297,7 @@ var NotesEditor = React.createClass({
           });
         } else {
           me.setState({
-            status: "Last saved file " + upload_path,
+		  status: <span>Last saved <a href={"http://kkdo.me/" + upload_path}>{"http://kkdo.me/" + upload_path}</a></span>,
             is_error: false
           });
         }
