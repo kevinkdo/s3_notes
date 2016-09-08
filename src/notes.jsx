@@ -110,6 +110,7 @@ const Login = React.createClass({
     return {
       password: "",
       status: "",
+      is_error: false,
       is_loading: false
     };
   },
@@ -128,11 +129,12 @@ const Login = React.createClass({
     var me = this;
     event.preventDefault();
     S3Manager.setPasswordAndReloadConfigs(me.state.password);
-    me.setState({ is_loading: true });
+    me.setState({ is_error: false, is_loading: true });
     S3Manager.getS3().getObject({Bucket: S3Manager.bucket, Key: S3Manager.personal_notes_filename}, function(err, data) {
       if (err) {
         me.setState({
-          status: err.code + ": " + err.message,
+          status: err.code.includes("SignatureDoesNotMatch") ? "" : (err.code + ": " + err.message),
+          is_error: true,
           is_loading: false
         });
       } else {
@@ -147,7 +149,7 @@ const Login = React.createClass({
       <div className="centerparent">
         <div className="centerchild">
           <form onSubmit={this.submit}>
-            <input type="password" value={this.state.password} onChange={this.setPassword} className="main_pw" ref="pwInput" placeholder="Enter password"/>
+            <input type="password" value={this.state.password} onChange={this.setPassword} className={"main_pw" + (me.state.is_error ? " invalid" : "")} ref="pwInput" placeholder="Enter password"/>
             <input type="submit" className="save_btn" disabled={me.state.is_loading}/>
             <div className="error">{this.state.status}</div>
           </form>

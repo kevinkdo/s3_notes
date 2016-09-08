@@ -89,6 +89,12 @@
       font-size: 14px;
       border-radius: 4px;
       margin: 0px 6px 0px 0px;
+      position: relative;
+    }
+
+    .invalid {
+      animation:invalid_animation .5s;
+      webkit-animation:invalid_animation .5s;
     }
 
     select {
@@ -109,6 +115,22 @@
 
     .hidden {
       display:none;
+    }
+
+    @keyframes invalid_animation {
+      0% {left:4px; box-shadow:0 0 5px 1px #dc322f;}
+      10% {left:-4px;}
+      30% {left:2px;}
+      60% {left:-2px;}
+      100% {left:0px; box-shadow: none;}
+    }
+
+    @-webkit-keyframes invalid_animation {
+      0% {left:4px; box-shadow:0 0 5px 1px #dc322f}
+      10% {left:-4px;}
+      30% {left:2px;}
+      60% {left:-2px;}
+      100% {left:0px;}
     }
   </style>
 </head>
