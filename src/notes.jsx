@@ -41,7 +41,7 @@ function decryptSecret(array, password) {
 }
 
 // Singleton
-var S3Manager = {
+const S3Manager = {
   // Constants
   region: 'us-west-2',
   bucket: 'kkdo.me',
@@ -72,7 +72,7 @@ var S3Manager = {
   }
 };
 
-var Router = React.createClass({
+const Router = React.createClass({
   getInitialState: function() {
     return {
       route: "login",
@@ -105,11 +105,12 @@ var Router = React.createClass({
   }
 });
 
-var Login = React.createClass({
+const Login = React.createClass({
   getInitialState: function() {
     return {
       password: "",
-      status: ""
+      status: "",
+      is_loading: false
     };
   },
 
@@ -127,10 +128,12 @@ var Login = React.createClass({
     var me = this;
     event.preventDefault();
     S3Manager.setPasswordAndReloadConfigs(me.state.password);
+    me.setState({ is_loading: true });
     S3Manager.getS3().getObject({Bucket: S3Manager.bucket, Key: S3Manager.personal_notes_filename}, function(err, data) {
       if (err) {
         me.setState({
-          status: err.code + ": " + err.message
+          status: err.code + ": " + err.message,
+          is_loading: false
         });
       } else {
         me.props.routeToEditInitialText(buf2str(data.Body.buffer));
@@ -139,11 +142,13 @@ var Login = React.createClass({
   },
 
   render: function() {
+    var me = this;
     return (
       <div className="centerparent">
         <div className="centerchild">
           <form onSubmit={this.submit}>
             <input type="password" value={this.state.password} onChange={this.setPassword} className="main_pw" ref="pwInput" placeholder="Enter password"/>
+            <input type="submit" className="save_btn" disabled={me.state.is_loading}/>
             <div className="error">{this.state.status}</div>
           </form>
         </div>
@@ -152,7 +157,7 @@ var Login = React.createClass({
   }
 })
 
-var NotesEditor = React.createClass({
+const NotesEditor = React.createClass({
   enableBeforeUnload: function() {
     window.onbeforeunload = function (e) {
       return "Discard changes?";
