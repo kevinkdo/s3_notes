@@ -314,19 +314,21 @@ const NotesEditor = React.createClass({
 
   render: function() {
     return (
-      <div>
-        <select value={this.state.filename} onChange={this.setFilename}>
-          <option value={S3Manager.personal_notes_filename}>Personal notes</option>
-          <option value={S3Manager.work_notes_filename}>Work notes</option>
-        </select>
-        <br />
-        <textarea rows="40" cols="160" onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className="mousetrap"/>
-        <br />
-        <button onClick={this.saveText} className="save_btn" disabled={!this.state.has_unsaved_changes}>Save</button>
-        <button onClick={this.takeSnapshot} className="save_btn">Take snapshot</button>
-        <button onClick={this.startFileSelection} className="save_btn">Upload a file</button>
-        <input type="file" name="file" id="hidden_file_input" className="hidden" onChange={this.uploadFile} />
-        <p className={this.state.is_error ? "error" : "success"}>{this.state.status}</p>
+      <div className="flexparent">
+        <div className="toolbar">
+          <select value={this.state.filename} onChange={this.setFilename}>
+            <option value={S3Manager.personal_notes_filename}>Personal notes</option>
+            <option value={S3Manager.work_notes_filename}>Work notes</option>
+          </select>
+          <button onClick={this.saveText} className="save_btn" disabled={!this.state.has_unsaved_changes}>Save</button>
+          <button onClick={this.takeSnapshot} className="save_btn">Take snapshot</button>
+          <button onClick={this.startFileSelection} className="save_btn">Upload a file</button>
+          <input type="file" name="file" id="hidden_file_input" className="hidden" onChange={this.uploadFile} />
+          <span className={this.state.is_error ? "error status" : "success status"}>{this.state.status}</span>
+        </div>
+        <div className="flexchild">
+          <textarea onChange={this.setText} value={this.state.text} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" className="mousetrap"/>
+        </div>
       </div>
     );
   }

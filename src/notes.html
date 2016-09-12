@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>notes</title>
+  <meta content='width=device-width, initial-scale=1' name='viewport'/>
   <script src="thirdparty/aws-sdk-2.5.3.min.js"></script>
   <script src="thirdparty/react.min.js"></script>
   <script src="thirdparty/react-dom.min.js"></script>
@@ -13,22 +14,34 @@
       background-color: #eee8d5;
       height: 100%;
       overflow: hidden;
+      margin: 0px;
+      padding: 6px;
+      box-sizing: border-box;
+    }
+
+    *, *:before, *:after {
+      box-sizing: inherit;
     }
 
     body {
       height: 100%;
-      overflow: auto;
-      margin: 6px;
+      padding: 0px;
+      margin: 0px;
+      overflow: hidden;
+    }
+
+    .toolbar {
+      box-sizing: border-box;
     }
 
     #react_main {
       height: 100%;
+      margin: 0px;
     }
 
-    .success, .error {
+    .status {
       font-family: Sans-Serif;
       font-size: 14px;
-      margin: 0px;
     }
 
     .success, .success a {
@@ -61,12 +74,11 @@
       font-family: Sans-Serif;
       background-color : #268bd2;
       color: #fdf6e3;
-      padding: 6px 12px;
       text-decoration: none;
       border: none;
       font-size: 16px;
       border-radius: 4px;
-      margin: 6px 6px 6px 0px;
+      margin: 0px 6px 6px 0px;
     }
 
     .save_btn:hover {
@@ -111,6 +123,23 @@
       font-size: 12px;
       border-radius: 4px;
       margin: 0px;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .flexparent {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .flexchild {
+      padding: 0px;
+      margin: 0px;
+      flex: 1;
+      height: 80%;
+      box-sizing: border-box;
     }
 
     .hidden {
